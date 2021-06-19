@@ -8,6 +8,10 @@ on:
 jobs:
   test:
     runs-on: ubuntu-20.04
+    strategy:
+      matrix:
+        alpine_version: [3.12, 3.13, 3.14]
+
     steps:
       -
         uses: actions/checkout@v2.3.4
@@ -36,10 +40,10 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           context: .
-          build-args: ALPINE_VERSION=3.13
+          build-args: ALPINE_VERSION=${{ matrix.alpine_version }}
           platforms: linux/amd64,linux/arm64,linux/arm/v7
           push: true
-          tags: 4km3/test-docker-publication:3.13
+          tags: 4km3/test-docker-publication:${{ matrix.alpine_version }}
       -
         name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
