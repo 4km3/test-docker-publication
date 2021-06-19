@@ -1,3 +1,4 @@
-FROM scratch
+ARG ALPINE_VERSION
+FROM alpine:$ALPINE_VERSION
 
 ADD Dockerfile /
