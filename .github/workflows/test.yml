@@ -17,9 +17,11 @@ jobs:
           password="${{ secrets.DOCKERHUB_PASSWORD }}"
           echo "$password" | docker login --username "$username" --password-stdin
       - name: Build Docker image
-        run: |
-          docker build -t 4km3/test-docker-publication .
-      - name: Push Docker image
         if: steps.docker-credentials.outputs.defined == 'true'
         run: |
-          docker push 4km3/test-docker-publication
+          docker buildx create --name test-builder --use
+          docker buildx build --platform linux/amd64,linux/arm64,linux/arm/v7 -t 4km3/test-docker-publication --push .
+      # - name: Push Docker image
+      #   if: steps.docker-credentials.outputs.defined == 'true'
+      #   run: |
+      #     docker push 4km3/test-docker-publication
