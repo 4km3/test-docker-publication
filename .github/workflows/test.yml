@@ -10,7 +10,8 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        alpine_version: [3.12, 3.13, 3.14]
+        alpine_version: [3.14, edge]
+        dnsmasq_version: [2.85-r2]
 
     steps:
       -
@@ -43,7 +44,7 @@ jobs:
           build-args: ALPINE_VERSION=${{ matrix.alpine_version }}
           platforms: linux/amd64,linux/arm64,linux/arm/v7
           push: true
-          tags: 4km3/test-docker-publication:${{ matrix.alpine_version }}
+          tags: 4km3/test-docker-publication:${{ matrix.dnsmasq_version }}-${{ matrix.alpine_version }}
       -
         name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
