@@ -10,9 +10,9 @@ jobs:
     runs-on: ubuntu-20.04
     strategy:
       matrix:
-        alpine_version: [3.14, edge]
-        dnsmasq_version: [2.85-r2]
-
+        version:
+          - '{"distro": "alpine", "rel": "3.14", "dnsmasq": "2.85-r2"}'
+          - '{"distro": "alpine", "rel": "edge", "dnsmasq": "2.85-r2"}'
     steps:
       -
         uses: actions/checkout@v2.3.4
@@ -35,16 +35,25 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_PASSWORD }}
       -
+        name: Extract Component Versions
+        id: versions
+        run: |
+          echo ::set-output name=distro::$(echo '${{ matrix.version }}' | jq -j .distro)
+          echo ::set-output name=rel::$(echo '${{ matrix.version }}' | jq -j .rel)
+          echo ::set-output name=dnsmasq::$(echo '${{ matrix.version }}' | jq -j .dnsmasq)
+      -
         name: Build and push
         if: steps.docker-credentials.outputs.defined == 'true'
         id: docker_build
         uses: docker/build-push-action@v2
         with:
           context: .
-          build-args: ALPINE_VERSION=${{ matrix.alpine_version }}
+          build-args: ALPINE_VERSION=${{ steps.versions.outputs.rel }}
           platforms: linux/amd64,linux/arm64,linux/arm/v7
           push: true
-          tags: 4km3/test-docker-publication:${{ matrix.dnsmasq_version }}-${{ matrix.alpine_version }}
+          tags: |
+            4km3/test-docker-publication:${{ steps.versions.outputs.dnsmasq }}-${{ steps.versions.outputs.distro }}-${{ steps.versions.outputs.rel }}
+            4km3/test-docker-publication:${{ steps.versions.outputs.dnsmasq }}
       -
         name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
