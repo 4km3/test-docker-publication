@@ -14,7 +14,7 @@ jobs:
               distro: alpine,
               rel: 3.14,
               dnsmasq: 2.85-r2,
-              tag: "4km3/test-docker-publication:2.85-r2",
+              tag: "${{ github.repository }}:2.85-r2",
             }
           - { distro: alpine, rel: edge, dnsmasq: 2.85-r2 }
     steps:
@@ -43,7 +43,7 @@ jobs:
           platforms: linux/amd64,linux/arm64,linux/arm/v7
           push: true
           tags: |
-            4km3/test-docker-publication:${{ matrix.version.dnsmasq }}-${{ matrix.version.distro }}-${{ matrix.version.rel }}
+            ${{ github.repository }}:${{ matrix.version.dnsmasq }}-${{ matrix.version.distro }}-${{ matrix.version.rel }}
             ${{ matrix.version.tag }}
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
