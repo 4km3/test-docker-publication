@@ -15,6 +15,7 @@ jobs:
               rel: 3.14,
               dnsmasq: 2.85-r2,
               tag: "${{ github.repository }}:2.85-r2",
+              taglatest: "${{ github.repository }}:latest",
             }
           - { distro: alpine, rel: edge, dnsmasq: 2.85-r2 }
     steps:
@@ -45,5 +46,6 @@ jobs:
           tags: |
             ${{ github.repository }}:${{ matrix.version.dnsmasq }}-${{ matrix.version.distro }}-${{ matrix.version.rel }}
             ${{ matrix.version.tag }}
+            ${{ matrix.version.taglatest }}
       - name: Image digest
         run: echo ${{ steps.docker_build.outputs.digest }}
